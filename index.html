@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thiago Vitelli — Desarrollador Web</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #080808;
+      --surface: #101010;
+      --surface2: #161616;
+      --border: #1e1e1e;
+      --accent: #38bdf8;
+      --accent-dim: rgba(56, 189, 248, 0.12);
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --text: #f1f5f9;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR GLOW ── */
+    .cursor-glow {
+      position: fixed;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: left 0.15s ease, top 0.15s ease;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 60px;
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text);
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #4ade80;
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      padding: 8px 16px;
+      border-radius: 100px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 7px; height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #4ade80;
+      animation: pulseGreen 2s infinite;
+    }
+
+    .hero-name {
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+    .hero-name .first { color: var(--text); }
+    .hero-name .last { color: var(--accent); }
+
+    .hero-role {
+      margin-top: 20px;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      font-weight: 400;
+      color: var(--text-soft);
+      height: 32px;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .hero-role .typed { color: var(--text); font-weight: 600; }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 2px; height: 1.1em;
+      background: var(--accent);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+
+    .hero-desc {
+      margin-top: 24px;
+      max-width: 480px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .hero-cta {
+      margin-top: 40px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .btn-primary {
+      padding: 13px 28px;
+      background: var(--accent);
+      color: #080808;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px var(--accent-glow); }
+
+    .btn-secondary {
+      padding: 13px 28px;
+      background: transparent;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      animation: fadeUp 0.8s 0.6s ease both;
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollLine 2s infinite;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 100px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 500px;
+      line-height: 1.7;
+      margin-bottom: 60px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider { width: 100%; height: 1px; background: var(--border); }
+
+    /* ── SOBRE MÍ ── */
+    .sobre-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .sobre-text p {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      line-height: 1.85;
+      margin-bottom: 16px;
+    }
+
+    .sobre-text p strong { color: var(--text); font-weight: 600; }
+
+    .cert-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .cert-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      transition: all 0.2s;
+    }
+    .cert-badge:hover { border-color: rgba(56,189,248,0.3); color: var(--accent); }
+    .cert-badge::before {
+      content: '✓';
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* ── STATS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--accent-dim), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .stat-card:hover { border-color: rgba(56,189,248,0.3); transform: translateY(-3px); }
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-number {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .stat-suffix {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      margin-top: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .service-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--accent-dim), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .service-card:hover { border-color: rgba(56,189,248,0.3); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .service-card:hover::before { opacity: 1; }
+
+    .service-icon {
+      width: 44px; height: 44px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    .service-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .service-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── TECH ── */
+    .tech-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .tech-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      transition: all 0.2s;
+    }
+    .tech-pill:hover { border-color: rgba(56,189,248,0.35); color: var(--accent); background: var(--accent-dim); }
+
+    .tech-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; opacity: 0.6; }
+
+    /* ── CONTACT FORM ── */
+    .contact-form-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px;
+      margin-bottom: 32px;
+    }
+
+    .form-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .form-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+    .form-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .form-input, .form-textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: rgba(56,189,248,0.5);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.08);
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+    .form-textarea { resize: vertical; min-height: 130px; }
+
+    .form-submit {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      background: var(--accent);
+      color: #080808;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+    .form-submit:hover { transform: translateY(-2px); box-shadow: 0 0 40px var(--accent-glow); }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #4ade80;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* ── CONTACT CARDS ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .contact-card:hover {
+      border-color: rgba(56,189,248,0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+    }
+
+    .contact-icon {
+      width: 46px; height: 46px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-icon svg { width: 22px; height: 22px; }
+    .contact-info { flex: 1; }
+    .contact-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    .contact-value { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+    .contact-arrow { color: var(--text-muted); transition: all 0.2s; }
+    .contact-card:hover .contact-arrow { color: var(--accent); transform: translateX(4px); }
+
+    /* ── FLOATING WHATSAPP ── */
+    .wa-float {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      width: 58px; height: 58px;
+      background: #25d366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.45);
+      transition: all 0.3s;
+      animation: fadeUp 1s 0.8s ease both;
+    }
+    .wa-float:hover { transform: scale(1.1) translateY(-3px); box-shadow: 0 8px 32px rgba(37, 211, 102, 0.6); }
+    .wa-float svg { width: 30px; height: 30px; }
+    .wa-pulse {
+      position: absolute;
+      width: 100%; height: 100%;
+      background: #25d366;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: waPulse 2.5s infinite;
+    }
+    .wa-tooltip {
+      position: absolute;
+      right: 70px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .wa-float:hover .wa-tooltip { opacity: 1; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p { font-size: 0.8rem; color: var(--text-muted); }
+    footer span { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+    @keyframes pulseGreen {
+      0%, 100% { box-shadow: 0 0 8px #4ade80; }
+      50% { box-shadow: 0 0 16px #4ade80; opacity: 0.6; }
+    }
+    @keyframes scrollLine {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+    @keyframes waPulse {
+      0% { transform: scale(1); opacity: 0.4; }
+      70% { transform: scale(1.5); opacity: 0; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .sobre-grid { grid-template-columns: 1fr; gap: 48px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      section { padding: 72px 24px; }
+      footer { padding: 24px; flex-direction: column; text-align: center; }
+      .contact-form-wrapper { padding: 28px 24px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- FLOATING WHATSAPP -->
+  <a href="https://wa.me/5491163576304" target="_blank" class="wa-float" aria-label="Contactar por WhatsApp">
+    <div class="wa-pulse"></div>
+    <svg fill="white" viewBox="0 0 24 24">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      <path d="M12.003 2C6.478 2 2 6.478 2 12.003c0 1.853.502 3.592 1.38 5.089L2 22l5.032-1.358A9.956 9.956 0 0012.003 22C17.522 22 22 17.522 22 12.003 22 6.478 17.522 2 12.003 2zm0 18.188a8.169 8.169 0 01-4.168-1.144l-.299-.177-3.093.836.838-3.068-.195-.315A8.161 8.161 0 013.84 12.003c0-4.505 3.658-8.163 8.163-8.163 4.505 0 8.163 3.658 8.163 8.163 0 4.505-3.658 8.185-8.163 8.185z"/>
+    </svg>
+    <div class="wa-tooltip">¡Escribime!</div>
+  </a>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">TV<span>.</span></div>
+    <ul class="nav-links">
+      <li><a href="#sobre">Sobre mí</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#tecnologias">Tecnologías</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-tag">Disponible para proyectos</div>
+    <h1 class="hero-name">
+      <span class="first">Thiago </span><span class="last">Vitelli</span>
+    </h1>
+    <p class="hero-role">
+      <span class="typed" id="typedText"></span><span class="cursor-blink"></span>
+    </p>
+    <p class="hero-desc">
+      Construyo sitios web y aplicaciones a medida, con foco en diseño limpio, rendimiento y resultados concretos para tu negocio.
+    </p>
+    <div class="hero-cta">
+      <a href="#contacto" class="btn-primary">Hablemos</a>
+      <a href="#servicios" class="btn-secondary">Ver servicios</a>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      scroll
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SOBRE MÍ -->
+  <section id="sobre">
+    <div class="sobre-grid">
+
+      <div class="sobre-text">
+        <p class="section-label reveal">Sobre mí</p>
+        <h2 class="section-title reveal">Apasionado por el código<br>desde el primer día</h2>
+
+        <p class="reveal">
+          Me llamo <strong>Thiago Vitelli</strong>, tengo <strong>23 años</strong> y soy desarrollador web y móvil freelancer de Argentina. Desde que descubrí la programación en <strong>2020</strong>, no paré: estudio, practico y aprendo algo nuevo todos los días.
+        </p>
+        <p class="reveal">
+          Lo que empezó como curiosidad se convirtió en mi forma de vida. Cada proyecto que arranco lo encaré con el mismo entusiasmo del primero, buscando siempre la mejor solución para cada cliente.
+        </p>
+        <p class="reveal">
+          Cuento con <strong>certificaciones en todos los lenguajes</strong> que manejo y más de <strong>6 proyectos reales</strong> funcionando hoy en día, lo que me permite ofrecer trabajo con respaldo y calidad comprobada.
+        </p>
+
+        <div class="cert-list reveal">
+          <span class="cert-badge">HTML5</span>
+          <span class="cert-badge">CSS3</span>
+          <span class="cert-badge">JavaScript</span>
+          <span class="cert-badge">React</span>
+          <span class="cert-badge">React Native</span>
+          <span class="cert-badge">Git</span>
+          <span class="cert-badge">GitHub</span>
+        </div>
+      </div>
+
+      <div class="stats-grid reveal">
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="6">0</span><span class="stat-suffix">+</span></div>
+          <div class="stat-label">Años estudiando</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="6">0</span><span class="stat-suffix">+</span></div>
+          <div class="stat-label">Proyectos activos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="7">0</span></div>
+          <div class="stat-label">Certificaciones</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number"><span class="counter" data-target="100">0</span><span class="stat-suffix">%</span></div>
+          <div class="stat-label">Compromiso</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SERVICIOS -->
+  <section id="servicios">
+    <p class="section-label reveal">Servicios</p>
+    <h2 class="section-title reveal">Lo que puedo hacer por vos</h2>
+    <p class="section-sub reveal">Desarrollo soluciones web y mobile adaptadas a cada necesidad, desde una landing page hasta una app completa.</p>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">🌐</div>
+        <div class="service-title">Sitios Web</div>
+        <div class="service-desc">Páginas web profesionales, rápidas y adaptadas a todos los dispositivos con HTML, CSS y JavaScript.</div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">🚀</div>
+        <div class="service-title">Landing Pages</div>
+        <div class="service-desc">Páginas de presentación orientadas a convertir visitas en clientes, con diseño moderno y carga optimizada.</div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">⚛️</div>
+        <div class="service-title">Aplicaciones Web</div>
+        <div class="service-desc">Apps interactivas y dinámicas construidas con React. Interfaces fluidas y experiencias de usuario de alto nivel.</div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">📱</div>
+        <div class="service-title">Apps Móviles</div>
+        <div class="service-desc">Aplicaciones para iOS y Android desarrolladas con React Native. Un solo código, dos plataformas.</div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">🔧</div>
+        <div class="service-title">Git & GitHub</div>
+        <div class="service-desc">Versionado profesional de proyectos, gestión de repositorios y colaboración ordenada en equipo.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TECNOLOGÍAS -->
+  <section id="tecnologias">
+    <p class="section-label reveal">Stack</p>
+    <h2 class="section-title reveal">Tecnologías</h2>
+    <p class="section-sub reveal">Las herramientas con las que trabajo día a día para construir productos de calidad.</p>
+
+    <div class="tech-grid">
+      <div class="tech-pill reveal"><span class="tech-dot"></span>HTML5</div>
+      <div class="tech-pill reveal"><span class="tech-dot"></span>CSS3</div>
+      <div class="tech-pill reveal"><span class="tech-dot"></span>JavaScript</div>
+      <div class="tech-pill reveal"><span class="tech-dot"></span>React</div>
+      <div class="tech-pill reveal"><span class="tech-dot"></span>React Native</div>
+      <div class="tech-pill reveal"><span class="tech-dot"></span>Git</div>
+      <div class="tech-pill reveal"><span class="tech-dot"></span>GitHub</div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACTO -->
+  <section id="contacto">
+    <p class="section-label reveal">Contacto</p>
+    <h2 class="section-title reveal">¿Arrancamos?</h2>
+    <p class="section-sub reveal">Contame tu proyecto y te respondo rápido. Trabajo con clientes de Argentina y el mundo.</p>
+
+    <!-- FORMULARIO -->
+    <!-- Para activarlo: creá una cuenta gratis en formspree.io y reemplazá YOUR_FORM_ID -->
+    <div class="contact-form-wrapper reveal">
+      <div class="form-title">Enviame un mensaje</div>
+      <div class="form-subtitle">Te respondo en menos de 24 horas.</div>
+
+      <form id="contactForm" action="https://formspree.io/f/mgoqbgpr" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="nombre">Nombre</label>
+            <input class="form-input" type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="tu@email.com" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="asunto">Asunto</label>
+          <input class="form-input" type="text" id="asunto" name="asunto" placeholder="¿De qué se trata?" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="mensaje">Mensaje</label>
+          <textarea class="form-textarea" id="mensaje" name="mensaje" placeholder="Contame tu proyecto..." required></textarea>
+        </div>
+        <button type="submit" class="form-submit">Enviar mensaje →</button>
+      </form>
+      <div class="form-success" id="formSuccess">✓ Mensaje enviado. ¡Te respondo pronto!</div>
+    </div>
+
+    <!-- CARDS DE CONTACTO -->
+    <div class="contact-grid">
+      <a href="mailto:thiagovitellicod@gmail.com" class="contact-card reveal">
+        <div class="contact-icon">
+          <svg fill="none" stroke="#38bdf8" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div class="contact-info">
+          <div class="contact-label">Email</div>
+          <div class="contact-value">thiagovitellicod@gmail.com</div>
+        </div>
+        <svg class="contact-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+
+      <a href="https://wa.me/5491163576304" target="_blank" class="contact-card reveal">
+        <div class="contact-icon">
+          <svg fill="#38bdf8" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12.003 2C6.478 2 2 6.478 2 12.003c0 1.853.502 3.592 1.38 5.089L2 22l5.032-1.358A9.956 9.956 0 0012.003 22C17.522 22 22 17.522 22 12.003 22 6.478 17.522 2 12.003 2zm0 18.188a8.169 8.169 0 01-4.168-1.144l-.299-.177-3.093.836.838-3.068-.195-.315A8.161 8.161 0 013.84 12.003c0-4.505 3.658-8.163 8.163-8.163 4.505 0 8.163 3.658 8.163 8.163 0 4.505-3.658 8.185-8.163 8.185z"/>
+          </svg>
+        </div>
+        <div class="contact-info">
+          <div class="contact-label">WhatsApp</div>
+          <div class="contact-value">+54 9 11 6357-6304</div>
+        </div>
+        <svg class="contact-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+
+      <a href="https://instagram.com/thiago.vitelli_dev" target="_blank" class="contact-card reveal">
+        <div class="contact-icon">
+          <svg fill="none" stroke="#38bdf8" stroke-width="1.8" viewBox="0 0 24 24">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+        </div>
+        <div class="contact-info">
+          <div class="contact-label">Instagram</div>
+          <div class="contact-value">@thiago.vitelli_dev</div>
+        </div>
+        <svg class="contact-arrow" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 <span>Thiago Vitelli</span>. Todos los derechos reservados.</p>
+    <p>Hecho con <span>♥</span> en Argentina</p>
+  </footer>
+
+  <script>
+    // Cursor glow
+    const glow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    // Typing animation
+    const roles = ['Programador Front-End', 'Desarrollador Web', 'Freelancer'];
+    let roleIndex = 0, charIndex = 0, deleting = false;
+    const typedEl = document.getElementById('typedText');
+    function type() {
+      const current = roles[roleIndex];
+      if (!deleting) {
+        typedEl.textContent = current.slice(0, charIndex + 1);
+        charIndex++;
+        if (charIndex === current.length) { deleting = true; setTimeout(type, 2000); return; }
+      } else {
+        typedEl.textContent = current.slice(0, charIndex - 1);
+        charIndex--;
+        if (charIndex === 0) { deleting = false; roleIndex = (roleIndex + 1) % roles.length; }
+      }
+      setTimeout(type, deleting ? 50 : 80);
+    }
+    setTimeout(type, 600);
+
+    // Stats counter animation
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target);
+      const duration = 1800;
+      const start = performance.now();
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(update);
+    }
+
+    // Scroll reveal + counter trigger
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          e.target.querySelectorAll('.counter').forEach(animateCounter);
+          revealObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Contact form
+    const form = document.getElementById('contactForm');
+    const successMsg = document.getElementById('formSuccess');
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = form.querySelector('.form-submit');
+      btn.textContent = 'Enviando...';
+      btn.disabled = true;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.style.display = 'none';
+          successMsg.style.display = 'block';
+        } else {
+          btn.textContent = 'Error al enviar. Intentá de nuevo.';
+          btn.disabled = false;
+        }
+      } catch {
+        btn.textContent = 'Error al enviar. Intentá de nuevo.';
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
